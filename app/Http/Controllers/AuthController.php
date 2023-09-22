@@ -29,14 +29,20 @@ class AuthController extends Controller
         }
 
         $user = Auth::user();
-
         $token = $user->createToken('token')->plainTextToken;
-
+        $user->remember_token = $token;
+        $user->save();
         $cookie = cookie('jwt', $token, 60 * 24); // 1 day
 
         return response([
-            'message' => $token,
-            'name' => $user['name']
+            'id' => $user['id'],
+            'first_name' => $user['name'],
+            'last_name' => '',
+            'email' => $user['email'],
+            'email_verified_at' => $user['email_verified_at'],
+            'created_at' => $user['created_at'],
+            'updated_at' => $user['updated_at'],
+            'api_token' => $token
         ])->withCookie($cookie);
     }
 
@@ -51,5 +57,24 @@ class AuthController extends Controller
 
     public function user(){
         return Auth::user();
+    }
+
+    public function verify_token(Request $request){
+        $users = User::where('remember_token', $request->input('api_token'))->get()->toArray();
+        $response = array();
+        if(count($users) > 0){
+            $user  = $users[0];
+            $response = array(
+                'id' => $user['id'],
+                'first_name' => $user['name'],
+                'last_name' => '',
+                'email' => $user['email'],
+                'email_verified_at' => $user['email_verified_at'],
+                'created_at' => $user['created_at'],
+                'updated_at' => $user['updated_at'],
+                'api_token' => $user['remember_token']
+            );
+        }
+        return response($response);
     }
 }

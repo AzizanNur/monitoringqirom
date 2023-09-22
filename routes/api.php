@@ -19,6 +19,7 @@ Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [\App\Http\Controllers\AuthController::class, 'login']);
 
 Route::get('user', [AuthController::class, 'user']);
+Route::post('verify_token', [AuthController::class, 'verify_token']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('user', [\App\Http\Controllers\AuthController::class, 'user']);
