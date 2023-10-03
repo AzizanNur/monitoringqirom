@@ -17,7 +17,7 @@ class linkGlobalController extends Controller
         $data = LinkGlobal::where([
                 'id'=> $id,
                 'is_status' => 1
-            ]);
+            ])->get();
         return response([
             'data' => $data
         ]);
